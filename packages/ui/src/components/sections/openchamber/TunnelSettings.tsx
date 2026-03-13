@@ -53,6 +53,7 @@ const BOOTSTRAP_TTL_OPTIONS: TtlOption[] = [
   { value: '7200000', label: '2h', ms: 2 * 60 * 60 * 1000 },
   { value: '28800000', label: '8h', ms: 8 * 60 * 60 * 1000 },
   { value: '86400000', label: '24h', ms: 24 * 60 * 60 * 1000 },
+  { value: '31536000000', label: '8760h (365d)', ms: 8760 * 60 * 60 * 1000 },
 ];
 
 const SESSION_TTL_OPTIONS: TtlOption[] = [
@@ -60,6 +61,7 @@ const SESSION_TTL_OPTIONS: TtlOption[] = [
   { value: '28800000', label: '8h', ms: 8 * 60 * 60 * 1000 },
   { value: '43200000', label: '12h', ms: 12 * 60 * 60 * 1000 },
   { value: '86400000', label: '24h', ms: 24 * 60 * 60 * 1000 },
+  { value: '31536000000', label: '8760h (365d)', ms: 8760 * 60 * 60 * 1000 },
 ];
 
 const MANAGED_REMOTE_TUNNEL_DOC_URL = 'https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/get-started/create-remote-tunnel/';

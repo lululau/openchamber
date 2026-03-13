@@ -231,7 +231,7 @@ export const createTunnelAuth = () => {
   };
 
   const isBootstrapRecordUsable = (record) => {
-    if (!record || record.revokedAt || record.usedAt) {
+    if (!record || record.revokedAt) {
       return false;
     }
     if (typeof record.expiresAt === 'number' && nowTs() >= record.expiresAt) {
