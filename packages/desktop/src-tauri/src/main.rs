@@ -1349,6 +1349,23 @@ fn read_desktop_local_port_from_disk() -> Option<u16> {
         })
 }
 
+/// Reads the desktop bind host from settings.json.
+/// Returns the configured bind host (e.g., "127.0.0.1", "0.0.0.0", or a specific IP).
+/// Returns None if not configured or invalid (caller should default to "127.0.0.1").
+fn read_desktop_bind_host_from_disk() -> Option<String> {
+    let path = settings_file_path();
+    let raw = fs::read_to_string(path).ok();
+    let parsed = raw
+        .as_deref()
+        .and_then(|s| serde_json::from_str::<serde_json::Value>(s).ok());
+    parsed
+        .as_ref()
+        .and_then(|v| v.get("desktopBindHost"))
+        .and_then(|v| v.as_str())
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+}
+
 fn write_desktop_local_port_to_disk(port: u16) -> Result<()> {
     let path = settings_file_path();
     if let Some(parent) = path.parent() {
@@ -1928,6 +1945,7 @@ async fn spawn_local_server(app: &tauri::AppHandle) -> Result<String> {
     }
 
     let augmented_path = path_segments.join(":");
+    let bind_host = read_desktop_bind_host_from_disk().unwrap_or_else(|| "127.0.0.1".to_string());
 
     for candidate in candidates {
         let port = match candidate {
@@ -1941,7 +1959,7 @@ async fn spawn_local_server(app: &tauri::AppHandle) -> Result<String> {
             .sidecar(SIDECAR_NAME)
             .map_err(|err| anyhow!("Failed to resolve sidecar '{SIDECAR_NAME}': {err}"))?
             .args(["--port", &port.to_string()])
-            .env("OPENCHAMBER_HOST", "127.0.0.1")
+            .env("OPENCHAMBER_HOST", &bind_host)
             .env("OPENCHAMBER_DIST_DIR", dist_dir.clone())
             .env("OPENCHAMBER_RUNTIME", "desktop")
             .env("OPENCHAMBER_DESKTOP_NOTIFY", "true")
